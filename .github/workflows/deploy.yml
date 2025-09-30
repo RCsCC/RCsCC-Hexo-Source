@@ -48,12 +48,10 @@ jobs:
           npx hexo generate
           
           # 3. 部署到目标仓库
-          # 🚨 优化3：使用标准的 Hexo 部署命令，它会读取 _config.yml 中的配置
-          # 只要你本地的 _config.yml 配置正确，Actions就会使用它
-          npx hexo deploy
+          # ⚠️ 关键修复：直接在 URL 中使用 DEPLOY_TOKEN 进行身份验证
+          # 这绕过了因 Actions 环境无法读取用户名/密码提示而导致的认证失败
+          npx hexo deploy --repo https://${{ secrets.DEPLOY_TOKEN }}@github.com/RCsCC/RCsCC.github.io.git
           
         env:
-          # 将 GitHub Pages 仓库的 Personal Access Token 注入到环境变量中
-          # Hexo Deployer Git 插件会自动读取这个变量进行身份验证
-          # ⚠️ 注意：这要求你在 GitHub 仓库 Settings > Secrets 中设置名为 DEPLOY_TOKEN 的密钥
+          # 仅使用 GIT_DEPLOY_TOKEN 环境变量，确保 Hexo Deployer Git 插件能识别
           GIT_DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
