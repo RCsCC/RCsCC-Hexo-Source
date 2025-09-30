@@ -1,17 +1,24 @@
-name: Deploy Hexo
+name: Deploy Hexo Blog
 
 on:
   push:
     branches:
       - main
+      # 🚨 优化1：确保只对主要的 Hexo 源代码仓库进行构建
+      # 只有当你在本地或手机上提交文件到 main 分支时才触发部署
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Source (Fetch Submodules)
+        uses: actions/checkout@v4
         with:
-          submodules: true
+          # ✅ 修复关键错误：启用子模块拉取，确保主题文件被下载
+          submodules: true 
+          # 确保拉取完整的历史记录，有助于正确处理子模块
+          fetch-depth: 0 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -21,18 +28,32 @@ jobs:
 
       - name: Configure Git Credentials
         run: |
+          # 配置 Git 信息，确保部署提交记录清晰
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          # 🚨 优化2：预先安装 Hexo-CLI，确保所有 Hexo 命令可用
+          npm install hexo-cli -g
 
       - name: Deploy to GitHub Pages
         run: |
+          # 1. 确保安装了部署插件
           npm install hexo-deployer-git
+          
+          # 2. 清理和生成静态文件
           npx hexo clean
           npx hexo generate
-          # 使用新的 HTTPS URL 格式，确保 Hexo Deployer 接收到正确的 Token
-          npx hexo deploy --repo https://${{ secrets.DEPLOY_TOKEN }}@github.com/RCsCC/RCsCC.github.io.git
+          
+          # 3. 部署到目标仓库
+          # 🚨 优化3：使用标准的 Hexo 部署命令，它会读取 _config.yml 中的配置
+          # 只要你本地的 _config.yml 配置正确，Actions就会使用它
+          npx hexo deploy
+          
         env:
-          GIT_TOKEN: ${{ secrets.DEPLOY_TOKEN }} # 尽管已在 URL 中使用，但保留以备用
+          # 将 GitHub Pages 仓库的 Personal Access Token 注入到环境变量中
+          # Hexo Deployer Git 插件会自动读取这个变量进行身份验证
+          # ⚠️ 注意：这要求你在 GitHub 仓库 Settings > Secrets 中设置名为 DEPLOY_TOKEN 的密钥
+          GIT_DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
