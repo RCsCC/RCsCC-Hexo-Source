@@ -32,6 +32,7 @@ jobs:
           npm install hexo-deployer-git
           npx hexo clean
           npx hexo generate
-          npx hexo deploy
+          # 使用新的 HTTPS URL 格式，确保 Hexo Deployer 接收到正确的 Token
+          npx hexo deploy --repo https://${{ secrets.DEPLOY_TOKEN }}@github.com/RCsCC/RCsCC.github.io.git
         env:
-          GIT_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          GIT_TOKEN: ${{ secrets.DEPLOY_TOKEN }} # 尽管已在 URL 中使用，但保留以备用
