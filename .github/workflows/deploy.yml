@@ -25,8 +25,8 @@ jobs:
       - name: Deploy to GitHub Pages
         run: |
           npm install hexo-deployer-git
-          hexo clean
-          hexo generate
-          hexo deploy
+          npx hexo clean
+          npx hexo generate
+          npx hexo deploy
         env:
           GIT_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
