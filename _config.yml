@@ -98,9 +98,7 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: landscape
 
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/RCsCC/RCsCC.github.io.git
+  repo: https://${{ secrets.DEPLOY_TOKEN }}@github.com/RCsCC/RCsCC.github.io.git
   branch: main
