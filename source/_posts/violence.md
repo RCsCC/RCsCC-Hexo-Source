@@ -1,5 +1,5 @@
 ---
-title: viilence
+title: violence
 date: 2025-10-12 15:21:33
 tags:
 ---
