@@ -1,5 +1,5 @@
 ---
-title: beijing.md
+title: beijing
 date: 2025-10-20 13:59:34
 tags:
 ---
